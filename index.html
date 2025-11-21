@@ -1,213 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body{
-    color: #eee;
-    font-family:    ;
-    margin: 0;
-    background-image:
-    repeating-linear-gradient(
-        to right, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    repeating-linear-gradient(
-        to bottom, #2d2a44 0 1px, transparent 2px 200px
-    ),
-    radial-gradient(
-        at 50% 50%, #2d2a44, #1d1b34
-    );
-}
-::-webkit-scrollbar{
-    width: 0;
-}
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    list-style: none;
-}
-header img{
-    width: 30px;
-}
-header{
-    width: min(1200px, 90vw);
-    margin: auto;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-header nav ul{
-    display: flex;
-    gap: 30px;
-}
-main{
-}
-main .banner{
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-    margin-top: -70px;
-}
-h1, h2, h3, h4, h5, h6{
-    font-weight: 500;
-}
-.banner button{
-    all: unset;
-    border: 1px solid #afaeae55;
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-image: linear-gradient(
-        to bottom, #eee1, transparent, #eee1
-    );
-    cursor: pointer;
-    transition: 0.5s;
-}
-.banner button:hover{
-    background-color: #c691e6;
-    color: #040018;
-    box-shadow: 0 0 50px #c691e6;
-   
-}
-h1{
-    --to: left;
-    font-size: 4em;
-    font-weight: bold;
-    background-image: linear-gradient(
-        to var(--to), #89a5df, #e46e7f, #e8e191
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-    line-height: 1em;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch the Falling Objects</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
 
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #fff;
+    }
 
-}
-h1.right{
-    --to: right;
-}
-
-
-.banner{
-    position: relative;
-}
-.banner #dotsCanvas{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-}
-    </style>
+    #score {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 20px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <figure>
-            <img src="../logo.svg">
-        </figure>
-        <nav>
-            <ul>
-                <li>Overview</li>
-                <li>Team</li>
-                <li>Pricing</li>
-                <li>Enterprise</li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <div class="banner">
-            <h5>@Artt_zzz</h5>
-            <div>
-                <h1 class="left">Welcome to My Coding</h1>
-                <h1 class="right">Mr. YOEL</h1>
-            </div>
-            <h4>
-                Subscribe to the channel to continuously
-                <br>update interesting videos
-            </h4>
-            <button>Subscribe Now &#8599</button>
 
+  <div id="score">Score: 0</div>
+  <canvas id="gameCanvas"></canvas>
 
-            <canvas id="dotsCanvas"></canvas>
-        </div>
-    </main>    
+  <script>
+    // Get the canvas element and its context
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
+    // Set canvas size
+    canvas.width = 600;
+    canvas.height = 400;
 
+    // Game variables
+    let basketWidth = 100;
+    let basketHeight = 20;
+    let basketX = (canvas.width - basketWidth) / 2;
+    let basketY = canvas.height - basketHeight - 10;
+    let basketSpeed = 7;
 
+    let fallingItems = [];
+    let score = 0;
+    let isGameOver = false;
 
-    <script>
-        let banner = document.querySelector('.banner');
-let canvas = document.getElementById('dotsCanvas');
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-const ctx = canvas.getContext('2d');
-let dots = [];
-const arrayColors = ['#eee', '#545454', '#596d91', '#bb5a68', '#696541'];
-for (let index = 0; index < 100; index++) {
-    dots.push({
-        x:  Math.floor(Math.random() * canvas.width),
-        y:  Math.floor(Math.random() * canvas.height),
-        size: Math.random() * 3 + 5,
-        color: arrayColors[Math.floor(Math.random()* 5)]
-    });
-}
-const drawDots = () => {
-    dots.forEach(dot => {
-        ctx.fillStyle = dot.color;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI*2);
-        ctx.fill();
-    })
-}
-drawDots();
-banner.addEventListener('mousemove', (event) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-    let mouse = {
-        x:  event.pageX - banner.getBoundingClientRect().left,
-        y:  event.pageY - banner.getBoundingClientRect().top
+    // Basket object
+    const basket = {
+      x: basketX,
+      y: basketY,
+      width: basketWidth,
+      height: basketHeight,
+      moveLeft: false,
+      moveRight: false
+    };
+
+    // Falling item object
+    function FallingItem() {
+      this.x = Math.random() * (canvas.width - 20);
+      this.y = 0;
+      this.size = 20;
+      this.speed = Math.random() * 3 + 2;
     }
-    dots.forEach(dot => {
-        let distance = Math.sqrt((mouse.x - dot.x) ** 2 + (mouse.y - dot.y) ** 2);
-        if(distance < 300){
-            ctx.strokeStyle = dot.color;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(dot.x, dot.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
+
+    // Create new falling item
+    function createItem() {
+      fallingItems.push(new FallingItem());
+    }
+
+    // Update game state
+    function update() {
+      if (isGameOver) return;
+
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the basket
+      ctx.fillStyle = "#4CAF50";
+      ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+      // Update falling items
+      fallingItems.forEach((item, index) => {
+        item.y += item.speed;
+
+        // Check if item hit the basket
+        if (item.y + item.size > basket.y && item.y + item.size < basket.y + basket.height && item.x + item.size > basket.x && item.x < basket.x + basket.width) {
+          score++;
+          fallingItems.splice(index, 1); // Remove the caught item
         }
-    })
-})
-banner.addEventListener('mouseout', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawDots();
-})
-window.addEventListener('resize', () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = banner.offsetWidth;
-    canvas.height = banner.offsetHeight;
 
+        // Check if item fell off screen
+        if (item.y > canvas.height) {
+          fallingItems.splice(index, 1); // Remove the missed item
+        }
 
-    dots = [];
-    for (let index = 0; index < 50; index++) {
-        dots.push({
-            x:  Math.floor(Math.random() * canvas.width),
-            y:  Math.floor(Math.random() * canvas.height),
-            size: Math.random() * 3 + 5,
-            color: arrayColors[Math.floor(Math.random()* 5)]
-        });
+        // Draw the falling item
+        ctx.fillStyle = "#FF5722";
+        ctx.fillRect(item.x, item.y, item.size, item.size);
+      });
+
+      // Draw the score
+      document.getElementById('score').textContent = `Score: ${score}`;
+
+      // Create new items at intervals
+      if (Math.random() < 0.02) {
+        createItem();
+      }
+
+      // Move the basket
+      if (basket.moveLeft && basket.x > 0) {
+        basket.x -= basketSpeed;
+      }
+      if (basket.moveRight && basket.x + basket.width < canvas.width) {
+        basket.x += basketSpeed;
+      }
+
+      requestAnimationFrame(update); // Keep the game loop running
     }
-    drawDots();
-})
-    </script>
+
+    // Listen for key presses to move the basket
+    document.addEventListener('keydown', (e) => {
+      if (e.key === "ArrowLeft") {
+        basket.moveLeft = true;
+      }
+      if (e.key === "ArrowRight") {
+        basket.moveRight = true;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === "ArrowLeft") {
+        basket.moveLeft = false;
+      }
+      if (e.key === "ArrowRight") {
+        basket.moveRight = false;
+      }
+    });
+
+    // Start the game
+    update();
+  </script>
+
 </body>
 </html>
+
