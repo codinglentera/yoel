@@ -1,153 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catch the Falling Objects</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background-color: #f0f0f0;
-    }
-
-    canvas {
-      display: block;
-      margin: 0 auto;
-      background-color: #fff;
-    }
-
-    #score {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 20px;
-      color: #333;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tetris — Simple</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <main class="wrap">
+    <h1>Tetris</h1>
 
-  <div id="score">Score: 0</div>
-  <canvas id="gameCanvas"></canvas>
+    <section class="game-area">
+      <canvas id="game" width="300" height="600"></canvas>
 
-  <script>
-    // Get the canvas element and its context
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+      <aside class="sidebar">
+        <div class="panel">
+          <h2>Next</h2>
+          <canvas id="next" width="120" height="120"></canvas>
+        </div>
 
-    // Set canvas size
-    canvas.width = 600;
-    canvas.height = 400;
+        <div class="panel">
+          <h2>Score</h2>
+          <div id="score">0</div>
+        </div>
 
-    // Game variables
-    let basketWidth = 100;
-    let basketHeight = 20;
-    let basketX = (canvas.width - basketWidth) / 2;
-    let basketY = canvas.height - basketHeight - 10;
-    let basketSpeed = 7;
+        <div class="panel">
+          <h2>Level</h2>
+          <div id="level">1</div>
+        </div>
 
-    let fallingItems = [];
-    let score = 0;
-    let isGameOver = false;
+        <div class="panel">
+          <h2>Lines</h2>
+          <div id="lines">0</div>
+        </div>
 
-    // Basket object
-    const basket = {
-      x: basketX,
-      y: basketY,
-      width: basketWidth,
-      height: basketHeight,
-      moveLeft: false,
-      moveRight: false
-    };
+        <div class="controls">
+          <button id="startBtn">Start</button>
+          <button id="pauseBtn">Pause</button>
+          <button id="restartBtn">Restart</button>
+        </div>
 
-    // Falling item object
-    function FallingItem() {
-      this.x = Math.random() * (canvas.width - 20);
-      this.y = 0;
-      this.size = 20;
-      this.speed = Math.random() * 3 + 2;
-    }
+        <div class="hint">
+          <strong>Controls</strong>
+          <p>← → Move</p>
+          <p>↑ Rotate</p>
+          <p>↓ Soft drop</p>
+          <p>Space Hard drop</p>
+          <p>P Pause</p>
+        </div>
+      </aside>
+    </section>
 
-    // Create new falling item
-    function createItem() {
-      fallingItems.push(new FallingItem());
-    }
+    <footer>
+      Built with HTML, CSS & JavaScript — open-source style
+    </footer>
+  </main>
 
-    // Update game state
-    function update() {
-      if (isGameOver) return;
-
-      // Clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw the basket
-      ctx.fillStyle = "#4CAF50";
-      ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-      // Update falling items
-      fallingItems.forEach((item, index) => {
-        item.y += item.speed;
-
-        // Check if item hit the basket
-        if (item.y + item.size > basket.y && item.y + item.size < basket.y + basket.height && item.x + item.size > basket.x && item.x < basket.x + basket.width) {
-          score++;
-          fallingItems.splice(index, 1); // Remove the caught item
-        }
-
-        // Check if item fell off screen
-        if (item.y > canvas.height) {
-          fallingItems.splice(index, 1); // Remove the missed item
-        }
-
-        // Draw the falling item
-        ctx.fillStyle = "#FF5722";
-        ctx.fillRect(item.x, item.y, item.size, item.size);
-      });
-
-      // Draw the score
-      document.getElementById('score').textContent = `Score: ${score}`;
-
-      // Create new items at intervals
-      if (Math.random() < 0.02) {
-        createItem();
-      }
-
-      // Move the basket
-      if (basket.moveLeft && basket.x > 0) {
-        basket.x -= basketSpeed;
-      }
-      if (basket.moveRight && basket.x + basket.width < canvas.width) {
-        basket.x += basketSpeed;
-      }
-
-      requestAnimationFrame(update); // Keep the game loop running
-    }
-
-    // Listen for key presses to move the basket
-    document.addEventListener('keydown', (e) => {
-      if (e.key === "ArrowLeft") {
-        basket.moveLeft = true;
-      }
-      if (e.key === "ArrowRight") {
-        basket.moveRight = true;
-      }
-    });
-
-    document.addEventListener('keyup', (e) => {
-      if (e.key === "ArrowLeft") {
-        basket.moveLeft = false;
-      }
-      if (e.key === "ArrowRight") {
-        basket.moveRight = false;
-      }
-    });
-
-    // Start the game
-    update();
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
-
+    
