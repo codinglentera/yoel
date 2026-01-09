@@ -1,50 +1,17 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vanilla Tetris</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Tetris JS</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Vanilla Tetris</h1>
-    <div class="game">
-      <canvas id="tetris" width="240" height="480"></canvas>
+    <h1>TETRIS</h1>
+    <canvas id="tetris" width="240" height="400"></canvas>
+    <p>
+        ⬅️ ➡️ : Geser | ⬆️ : Putar | ⬇️ : Turun
+    </p>
 
-      <div class="side">
-        <div class="panel">
-          <h3>Next</h3>
-          <canvas id="next" width="120" height="120"></canvas>
-        </div>
-        <div class="panel">
-          <h3>Hold (C)</h3>
-          <canvas id="hold" width="120" height="120"></canvas>
-        </div>
-        <div class="panel stats">
-          <p>Score: <span id="score">0</span></p>
-          <p>Lines: <span id="lines">0</span></p>
-          <p>Level: <span id="level">0</span></p>
-        </div>
-        <div class="panel controls">
-          <h4>Controls</h4>
-          <ul>
-            <li>← → : Move</li>
-            <li>↓ : Soft drop</li>
-            <li>Space : Hard drop</li>
-            <li>Up / X : Rotate CW</li>
-            <li>Z : Rotate CCW</li>
-            <li>C : Hold</li>
-            <li>P : Pause</li>
-          </ul>
-        </div>
-        <button id="restart">Restart</button>
-      </div>
-    </div>
-
-    <p class="credit">Made with HTML, CSS & JS</p>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
