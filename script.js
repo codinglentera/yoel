@@ -1,1 +1,13 @@
-/tempat script/
+body {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+canvas {
+    background: #000;
+    border: 3px solid #fff;
+    margin-top: 10px;
+}
+
